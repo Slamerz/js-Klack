@@ -3,9 +3,12 @@ const {connect, connection, Types} = require('mongoose');
 const Message = require('./models/Message');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const mongoConnectionString = "mong" + "odb+" + "srv://" + "slamer" + "z:Nh1IJ" + "FQy5dPxgKj" + "Z@kenzi" + "e-kk9zx.mong" + "odb.net/test?r" + "etryWrites=true";
 
+connect(mongoConnectionString, {useNewUrlParser: true});
+connection.on('error', console.error.bind(console, 'connection error:'));
+connection.once('open', () => { console.log('MongoDB connected')});
 
 // Track last active times for each sender
 let users = {};
@@ -13,9 +16,6 @@ let users = {};
 app.use(express.static(__dirname+"/public"));
 app.use(express.json());
 
-connect(mongoConnectionString, {useNewUrlParser: true});
-connection.on('error', console.error.bind(console, 'connection error:'));
-connection.once('open', () => { console.log('MongoDB connected')});
 
 
 // generic comparison function for case-insensitive alphabetic sorting on the name field
