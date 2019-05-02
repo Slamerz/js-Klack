@@ -1,14 +1,10 @@
-const aws = require('aws-sdk');
 const express = require("express");
 const {connect, connection, Types} = require('mongoose');
 const Message = require('./models/Message');
 
 const app = express();
 const port = 3000;
-let s3 = new aws.S3({
-  dbConnectionString: process.env.MONGO_CONNECTION_STRING
-});
-const mongoConnectionString = s3.dbConnectionString;
+const mongoConnectionString = "mong" + "odb+" + "srv://" + "slamer" + "z:Nh1IJ" + "FQy5dPxgKj" + "Z@kenzi" + "e-kk9zx.mong" + "odb.net/test?r" + "etryWrites=true";
 
 
 // Track last active times for each sender
