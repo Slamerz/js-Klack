@@ -9,13 +9,13 @@ let messages = [];
 // Track last active times for each sender
 let users = {};
 
-app.use(express.static("./public"));
+app.use(express.static(__dirname+"/public"));
 app.use(express.json());
 
 // generic comparison function for case-insensitive alphabetic sorting on the name field
 function userSortFn(a, b) {
-  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+  let nameA = a.name.toUpperCase(); // ignore upper and lowercase
+  let nameB = b.name.toUpperCase(); // ignore upper and lowercase
   if (nameA < nameB) {
     return -1;
   }
@@ -35,7 +35,7 @@ app.get("/messages", (request, response) => {
   const requireActiveSince = now - 15 * 1000;
 
   // create a new list of users with a flag indicating whether they have been active recently
-  usersSimple = Object.keys(users).map(x => ({
+  let usersSimple = Object.keys(users).map(x => ({
     name: x,
     active: users[x] > requireActiveSince
   }));
