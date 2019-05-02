@@ -5,7 +5,7 @@ const Message = require('./models/Message');
 
 const app = express();
 const port = 3000;
-const s3 = new(aws.S3({dbConnectionString: process.env.MONGO_CONNECTION_STRING}));
+const s3 = new aws.S3({dbConnectionString: process.env.MONGO_CONNECTION_STRING});
 const mongoConnectionString = s3.dbConnectionString;
 
 
