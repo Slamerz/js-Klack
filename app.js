@@ -1,7 +1,11 @@
+require('dotenv').config();
 const express = require("express");
 const querystring = require("querystring");
-const port = 3000;
+const {connect, connection, model} = require('mongoose');
+
 const app = express();
+const port = 3000;
+const mongoConnectionString = process.env.MONGO_CONNECTION_STRING;
 
 // List of all messages
 let messages = [];
@@ -11,6 +15,11 @@ let users = {};
 
 app.use(express.static(__dirname+"/public"));
 app.use(express.json());
+
+connect(mongoConnectionString, {useNewUrlParser: true});
+connection.on('error', console.error.bind(console, 'connection error:'));
+connection.once('open', () => { console.log('MongoDB connected')});
+
 
 // generic comparison function for case-insensitive alphabetic sorting on the name field
 function userSortFn(a, b) {
@@ -67,4 +76,4 @@ app.post("/messages", (request, response) => {
   response.send(request.body);
 });
 
-app.listen(3000);
+app.listen(port, () => console.log(`Express listening on port ${port}`));
