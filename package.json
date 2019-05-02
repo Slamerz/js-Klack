@@ -4,7 +4,8 @@
   "description": "A basic messaging service written with NodeJS+Express, with a web client using the Fetch API.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nf start"
   },
   "repository": {
     "type": "git",
@@ -22,5 +23,8 @@
     "dotenv": "^7.0.0",
     "express": "^4.16.3",
     "mongoose": "^5.5.5"
+  },
+  "engines": {
+    "node": "11.7.0"
   }
 }
