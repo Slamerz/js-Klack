@@ -1,10 +1,10 @@
-const {Schema, ObjectId, model} = require('mongoose');
+const {Schema, Types, model} = require('mongoose');
 
 const messageSchema = new Schema({
-    _id: {type: ObjectId, default: new ObjectId},
+    _id: Types.ObjectId,
     author: String,
     body: String,
-    date: {type: Date, default: Date.now()}
+    date: Date
 });
 
 module.exports = model('Message', messageSchema);

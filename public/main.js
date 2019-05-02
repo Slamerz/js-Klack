@@ -4,7 +4,7 @@ const textarea = document.getElementById("newmessage");
 const ding = new Audio("typewriter_ding.m4a");
 
 // this will be the list of all messages displayed on the client
-let messages = [{ timestamp: 0 }];
+let messages = [];
 
 let name = window.prompt("Enter your name");
 // if they didn't type anything at the prompt, make up a random name
@@ -14,8 +14,8 @@ if (name.length === 0) name = "Anon-" + Math.floor(Math.random() * 1000);
 function appendMessage(msg) {
   messages.push(msg);
   messagesDiv.innerHTML += `<div class="message"><strong>${
-    msg.sender
-  }</strong><br>${msg.message}</div>`;
+    msg.author
+  }</strong><br>${msg.body}</div>`;
 }
 
 // redraw the entire list of users, indicating active/inactive
@@ -46,16 +46,23 @@ function fetchMessages() {
     .then(response => response.json())
     .then(data => {
       // if already scrolled to bottom, do so again after adding messages
+        if(!messages[0]){
+            listUsers(data.users);
+            for (let i = data.messages.length -1; i >= 0; i--) {
+                let msg = data.messages[i];
+                appendMessage(msg);
+            }
+            return;
+        }
       const shouldScroll = scrolledToBottom();
-      var shouldDing = false;
+      let shouldDing = false;
 
       // redraw the user list
       listUsers(data.users);
-
       // examine all received messages, add those newer than the last one shown
-      for (let i = 0; i < data.messages.length; i++) {
+      for (let i = data.messages.length -1; i >= 0; i--) {
         let msg = data.messages[i];
-        if (msg.timestamp > messages[messages.length - 1].timestamp) {
+        if (msg.date > messages[messages.length - 1].date) {
           appendMessage(msg);
           shouldDing = true;
         }
@@ -77,11 +84,12 @@ document.getElementById("newmessage").addEventListener("keypress", event => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ sender: name, message: textarea.value })
+      body: JSON.stringify({ author: name, body: textarea.value, date: Date.now()})
     };
     fetch("/messages", postRequestOptions)
       .then(response => response.json())
       .then(msg => {
+          console.log(msg);
         appendMessage(msg);
         scrollMessages();
 

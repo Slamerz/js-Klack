@@ -1,14 +1,12 @@
 require('dotenv').config();
 const express = require("express");
-const querystring = require("querystring");
-const {connect, connection, model} = require('mongoose');
+const {connect, connection, Types} = require('mongoose');
+const Message = require('./models/Message');
 
 const app = express();
 const port = 3000;
 const mongoConnectionString = process.env.MONGO_CONNECTION_STRING;
 
-// List of all messages
-let messages = [];
 
 // Track last active times for each sender
 let users = {};
@@ -36,7 +34,7 @@ function userSortFn(a, b) {
   return 0;
 }
 
-app.get("/messages", (request, response) => {
+app.get("/messages", async (request, response) => {
   // get the current time
   const now = Date.now();
 
@@ -57,19 +55,24 @@ app.get("/messages", (request, response) => {
   users[request.query.for] = now;
 
   // send the latest 40 messages and the full user list, annotated with active flags
-  response.send({ messages: messages.slice(-40), users: usersSimple });
+  const messages = await Message
+      .find()
+      .sort({'date': -1})
+      .limit(40);
+  response.send({ messages: messages, users: usersSimple });
 });
 
-app.post("/messages", (request, response) => {
-  // add a timestamp to each incoming message.
-  const timestamp = Date.now();
-  request.body.timestamp = timestamp;
+app.post("/messages", async (request, response) => {
+  let message = new Message({_id: new Types.ObjectId, author: request.body.author, body: request.body.body, date: request.body.date});
 
   // append the new message to the message list
-  messages.push(request.body);
+  await message.save((err, res) =>{
+    if(err)
+      console.error(err);
+  });
 
   // update the posting user's last access timestamp (so we know they are active)
-  users[request.body.sender] = timestamp;
+  users[request.body.author] = request.body.date;
 
   // Send back the successful response.
   response.status(201);
